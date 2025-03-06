@@ -46,24 +46,24 @@ const languageSchema = z
      */
     label: z.string(),
     /**
-     * Should this language be used as an user interface language?
+     * Should this language be used as a site language?
      *
      * Make sure to provide translations inside the `src/translations/` folder.
      *
      * Default is `false`
      */
-    isUILanguage: z.boolean().default(false),
+    isSiteLanguage: z.boolean().default(false),
     /**
-     * Should this language be used as the default user interface language?
+     * Should this language be used as the default site language?
      *
      * The default language will be used as a fallback when translations are missing
      * also this will be the language selected when a user visits the site on the `/` path.
      *
-     * Setting this to `true` will also set `isUILanguage` to `true`.
+     * Setting this to `true` will also set `isSiteLanguage` to `true`.
      *
      * Default is `false`
      */
-    isDefaultUILanguage: z.boolean().default(false),
+    isDefaultSiteLanguage: z.boolean().default(false),
     /**
      * An array of fallback language codes.
      *
@@ -72,7 +72,7 @@ const languageSchema = z
      * matching translation key is found.
      *
      * If no match is found from the fallback languages, the system will
-     * attempt the translation using the default UI language.
+     * attempt the translation using the default site language.
      *
      * If the translation still cannot be resolved, it will then fall back to the English
      * translation as a final resort.
@@ -83,8 +83,8 @@ const languageSchema = z
   })
   .transform((language) => ({
     ...language,
-    // if language is default ui language also set is ui language to true.
-    isUILanguage: language.isDefaultUILanguage || language.isUILanguage,
+    // if language is default site language also set is site language to true.
+    isSiteLanguage: language.isDefaultSiteLanguage || language.isSiteLanguage,
   }))
 
 const absolutePath = (path: string) =>
@@ -125,7 +125,17 @@ export const configSchema = z.object({
    */
   title: z.string(),
   /**
-   * All languages: content languages and ui languages.
+   * Defines the primary color for your site.
+   *
+   * The primary color is applied to various UI elements, such as buttons,
+   * links, and hover states. Choose a color that aligns with your brand
+   * and provides good contrast against a white background for accessibility.
+   *
+   * Default: #1E2939 (dark gray)
+   */
+  primaryColor: z.string().default("#1E2939"),
+  /**
+   * All languages: content languages and site languages.
    */
   languages: languageSchema.array(),
   /**
@@ -186,8 +196,8 @@ export const configSchema = z.object({
     .object({
       /**
        * When this is set to true, search results will be initially
-       * filtered by UI language. The filter will only be set when there
-       * is any media item in the UI language.
+       * filtered by site language. The filter will only be set when there
+       * is any media item in the site language.
        */
       filterByLocale: z.boolean().default(false),
     })
