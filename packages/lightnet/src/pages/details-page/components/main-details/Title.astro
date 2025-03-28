@@ -1,0 +1,28 @@
+---
+import { getMediaItem } from "../../../../content/get-media-items"
+
+interface Props {
+  mediaId: string
+  className?: string
+}
+
+const {
+  data: { title, language },
+} = await getMediaItem(Astro.props.mediaId)
+
+const titleSize = {
+  md: "text-3xl sm:text-4xl",
+  xl: "text-4xl sm:text-5xl",
+}
+---
+
+<h1
+  class="font-bold"
+  lang={language}
+  class:list={[
+    titleSize[title.length > 20 ? "md" : "xl"],
+    Astro.props.className,
+  ]}
+>
+  {title}
+</h1>

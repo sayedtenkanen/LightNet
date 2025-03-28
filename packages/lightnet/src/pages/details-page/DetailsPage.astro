@@ -8,18 +8,18 @@ import { getMediaType } from "../../content/get-media-types"
 import { resolveLocales } from "../../i18n/resolve-locales"
 import Page from "../../layouts/Page.astro"
 import { markdownToText } from "../../utils/markdown"
-import DefaultDetails from "./DefaultDetails.astro"
-import VideoDetails from "./VideoDetails.astro"
+import DefaultDetailsPage from "./DefaultDetailsPage.astro"
+import VideoDetailsPage from "./VideoDetailsPage.astro"
 
 export const getStaticPaths = (async () => {
   const mediaItems = await getMediaItems()
   return resolveLocales(config).flatMap((locale) =>
-    mediaItems.map(({ id: slug }) => ({ params: { slug, locale } })),
+    mediaItems.map(({ id: mediaId }) => ({ params: { mediaId, locale } })),
   )
 }) satisfies GetStaticPaths
 
-const { slug } = Astro.params
-const mediaItem = (await getMediaItem(Astro.params.slug)).data
+const { mediaId } = Astro.params
+const mediaItem = (await getMediaItem(Astro.params.mediaId)).data
 
 const {
   data: { detailsPage },
@@ -31,7 +31,6 @@ if (detailsPage?.layout === "custom") {
   const d = import.meta.glob("/src/details-pages/*.astro")
   const customDetailsImport = d[
     `/src/details-pages/${detailsPage.customComponent}`
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ] as () => Promise<any>
   if (!customDetailsImport) {
     throw new AstroError(
@@ -47,7 +46,15 @@ if (detailsPage?.layout === "custom") {
   title={mediaItem.title}
   description={markdownToText(mediaItem.description)}
 >
-  {layout === "default" && <DefaultDetails slug={slug} {...detailsPage} />}
-  {layout === "video" && <VideoDetails slug={slug} {...detailsPage} />}
-  {CustomDetails && <CustomDetails slug={slug} {...detailsPage} />}
+  {
+    layout === "default" && (
+      <DefaultDetailsPage mediaId={mediaId} {...detailsPage} />
+    )
+  }
+  {
+    layout === "video" && (
+      <VideoDetailsPage mediaId={mediaId} {...detailsPage} />
+    )
+  }
+  {CustomDetails && <CustomDetails mediaId={mediaId} {...detailsPage} />}
 </Page>

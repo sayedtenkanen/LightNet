@@ -4,9 +4,9 @@ import { resolveLanguage } from "../../../i18n/resolve-language"
 import { markdownToHtml } from "../../../utils/markdown"
 
 interface Props {
-  slug: string
+  mediaId: string
 }
-const item = await getMediaItem(Astro.props.slug)
+const item = await getMediaItem(Astro.props.mediaId)
 
 const { description, language } = item.data
 
@@ -17,7 +17,7 @@ const { direction, code: lang } = resolveLanguage(language)
   description && (
     <div
       dir={direction}
-      class="prose prose-gray mx-auto mt-10 max-w-screen-md px-4 sm:mt-14 md:px-8"
+      class="prose prose-gray mx-auto mt-16 max-w-screen-md px-4 md:mt-20 md:px-8"
       set:html={await markdownToHtml(description)}
       lang={lang}
       id="description"

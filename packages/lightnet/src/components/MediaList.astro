@@ -1,16 +1,30 @@
 ---
+import type { ImageMetadata } from "astro"
 import { Image } from "astro:assets"
 
-import type { MediaItemEntry } from "../content/content-schema-internal"
 import { getMediaTypes } from "../content/get-media-types"
 import { detailsPagePath } from "../utils/paths"
 import Icon from "./Icon"
 
-interface Props {
-  items: (MediaItemEntry & { disabled?: boolean })[]
+type MediaItem = {
+  id: string
+  disabled?: boolean
+  data: {
+    title: string
+    language: string
+    authors?: string[]
+    type: { id: string }
+    image: ImageMetadata
+  }
 }
 
-const { items } = Astro.props
+interface Props {
+  items: (MediaItem | undefined)[]
+}
+
+// We allow users to pass undefined values because
+// this is in the return type of getEntry
+const items = Astro.props.items.filter((item) => !!item)
 
 const { t, direction } = Astro.locals.i18n
 
@@ -38,7 +52,7 @@ const mediaTypes = Object.fromEntries(
                   id: item.id,
                 })
           }
-          class="group flex overflow-hidden py-4 transition-colors ease-in-out md:rounded-sm md:py-8 md:hover:bg-gray-100"
+          class="group flex overflow-hidden py-4 transition-colors ease-in-out md:rounded-sm md:py-6 md:hover:bg-gray-100"
           class:list={
             item.disabled ? "pointer-events-none cursor-default opacity-50" : ""
           }

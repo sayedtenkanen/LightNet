@@ -6,7 +6,7 @@ import { getMediaTypes } from "../content/get-media-types"
 import { detailsPagePath } from "../utils/paths"
 import Icon from "./Icon"
 
-type GalleryItem = {
+type MediaItem = {
   id: string
   data: {
     title: string
@@ -25,11 +25,14 @@ const types = Object.fromEntries(
 )
 
 interface Props {
-  items: GalleryItem[]
+  items: (MediaItem | undefined)[]
   layout: "book" | "video" | "portrait" | "landscape"
 }
 
-const { items, layout } = Astro.props
+const { items: itemsInput, layout } = Astro.props
+// We allow users to pass undefined values because
+// this is in the return type of getEntry
+const items = itemsInput.filter((item) => !!item)
 ---
 
 {

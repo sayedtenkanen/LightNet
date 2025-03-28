@@ -1,0 +1,27 @@
+---
+import type { ImageMetadata } from "astro"
+
+import MediaGallery from "./MediaGallery.astro"
+import Section from "./Section.astro"
+
+type MediaItem = {
+  id: string
+  data: {
+    title: string
+    type: { id: string }
+    image: ImageMetadata
+  }
+}
+
+interface Props {
+  title?: string
+  items: (MediaItem | undefined)[]
+  layout: "book" | "video" | "portrait" | "landscape"
+}
+
+const { title, items, layout } = Astro.props
+---
+
+<Section title={title}>
+  <MediaGallery items={items} layout={layout} />
+</Section>
