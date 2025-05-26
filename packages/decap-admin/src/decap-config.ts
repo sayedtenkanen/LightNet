@@ -27,7 +27,7 @@ const categories = (await getCollection("categories")).map(({ id }) => id)
 const local_backend = import.meta.env.MODE !== "production"
 const backend =
   local_backend || !userConfig.backend
-    ? { name: "git-gateway" }
+    ? { name: "local" }
     : toSnakeCase(userConfig.backend)
 
 export const config = {
