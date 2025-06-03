@@ -1,9 +1,10 @@
 ---
 import type { GetStaticPaths } from "astro"
 import { AstroError } from "astro/errors"
+import { getCollection } from "astro:content"
 import config from "virtual:lightnet/config"
 
-import { getMediaItem, getMediaItems } from "../../content/get-media-items"
+import { getMediaItem } from "../../content/get-media-items"
 import { getMediaType } from "../../content/get-media-types"
 import { resolveLocales } from "../../i18n/resolve-locales"
 import AudioDetailsPage from "./AudioDetailsPage.astro"
@@ -11,7 +12,7 @@ import DefaultDetailsPage from "./DefaultDetailsPage.astro"
 import VideoDetailsPage from "./VideoDetailsPage.astro"
 
 export const getStaticPaths = (async () => {
-  const mediaItems = await getMediaItems()
+  const mediaItems = await getCollection("media")
   return resolveLocales(config).flatMap((locale) =>
     mediaItems.map(({ id: mediaId }) => ({ params: { mediaId, locale } })),
   )
