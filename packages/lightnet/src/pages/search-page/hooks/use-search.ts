@@ -2,20 +2,28 @@ import Fuse from "fuse.js"
 import { useEffect, useRef, useState } from "react"
 
 import type { SearchItem, SearchResponse } from "../../api/search-response"
-
-export type SearchQuery = {
-  search?: string
-  language?: string
-  type?: string
-  category?: string
-}
+import { observeSearchQuery, type SearchQuery } from "../utils/search-query"
 
 export function useSearch() {
   const fuse = useRef<Fuse<SearchItem>>(undefined)
   const [allItems, setAllItems] = useState<SearchItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [query, setQuery] = useState<SearchQuery>({})
+  const [query, setQuery] = useState<Partial<SearchQuery>>({})
   useEffect(() => {
+    const removeSearchQueryObserver = observeSearchQuery((newQuery) => {
+      // todo remove next line
+      console.log("query updated", query, newQuery)
+      const queryIsUpdated = (
+        ["search", "category", "language", "type"] as const
+      ).find((key) =>
+        newQuery[key] ? newQuery[key] !== query[key] : query[key],
+      )
+
+      if (!queryIsUpdated) {
+        return
+      }
+      setQuery(newQuery)
+    })
     const fetchData = async () => {
       try {
         const response = await fetch("/api/search.json")
@@ -46,6 +54,7 @@ export function useSearch() {
       setIsLoading(false)
     }
     fetchData()
+    return removeSearchQueryObserver
   }, [])
 
   const { language, type, category, search } = query
@@ -72,26 +81,14 @@ export function useSearch() {
     })
   }
 
-  const updateQuery = (newQuery: SearchQuery) => {
-    const queryIsUpdated = (
-      ["search", "category", "language", "type"] as const
-    ).find((key) => (newQuery[key] ? newQuery[key] !== query[key] : query[key]))
-
-    if (!queryIsUpdated) {
-      return
-    }
-    setQuery(newQuery)
-  }
-
   if (!fuse.current || !fuseQuery.length) {
-    return { results: allItems, updateQuery, isLoading }
+    return { results: allItems, isLoading }
   }
 
   return {
     results: fuse.current
       .search({ $and: fuseQuery })
       .map((fuseItem) => fuseItem.item),
-    updateQuery,
     isLoading,
   }
 }

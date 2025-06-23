@@ -2,32 +2,32 @@ import { useEffect, useRef, useState } from "react"
 
 import Icon from "../../../components/Icon"
 import { useDebounce } from "../hooks/use-debounce"
-import type { SearchQuery } from "../hooks/use-search"
 import type { MediaType, TranslatedLanguage } from "../types"
 import type { Translations } from "../utils/search-translations"
 import { useProvidedTranslations } from "../utils/use-provided-translations"
 import Select from "./Select"
-
-// URL search params
-const SEARCH = "search"
-const LANGUAGE = "language"
-const TYPE = "type"
-const CATEGORY = "category"
+import {
+  CATEGORY,
+  getSearchQueryParam,
+  LANGUAGE,
+  SEARCH,
+  TYPE,
+  updateSearchQuery,
+} from "../utils/search-query"
 
 interface Props {
   contentLanguages: TranslatedLanguage[]
+  // todo move this to a json file
   categories: Record<string, string>
   mediaTypes: MediaType[]
   locale?: string
   translations: Translations
   filterByLocale: boolean
-  updateQuery: (query: SearchQuery) => void
 }
 
 export default function SearchFilter({
   categories,
   mediaTypes,
-  updateQuery,
   translations,
   filterByLocale,
   locale,
@@ -37,17 +37,11 @@ export default function SearchFilter({
   const typesFilterEnabled = mediaTypes.length > 1
   // Not every media item has a category. So it makes
   // sense to have the filter when there is only one category.
+  // todo calculate this once during build time
   const categoriesFilterEnabled = Object.keys(categories).length > 0
 
-  const getSearchParam = (name: string, defaultValue = "") => {
-    // be lazy to avoid parsing search params all the time
-    return () => {
-      const searchParams = new URLSearchParams(window.location.search)
-      return searchParams.get(name) ?? defaultValue
-    }
-  }
-
-  const [search, setSearch] = useState(getSearchParam(SEARCH))
+  const [search, setSearch] = useState(getSearchQueryParam(SEARCH))
+  // todo calculate this once during build time
   const [language, setLanguage] = useState(() => {
     let initialLanguageFilter = ""
     const hasContentLanguage = contentLanguages.find(
@@ -61,10 +55,10 @@ export default function SearchFilter({
     ) {
       initialLanguageFilter = locale
     }
-    return getSearchParam(LANGUAGE, initialLanguageFilter)()
+    return getSearchQueryParam(LANGUAGE, initialLanguageFilter)()
   })
-  const [type, setType] = useState(getSearchParam(TYPE))
-  const [category, setCategory] = useState(getSearchParam(CATEGORY))
+  const [type, setType] = useState(getSearchQueryParam(TYPE))
+  const [category, setCategory] = useState(getSearchQueryParam(CATEGORY))
 
   const searchInput = useRef<HTMLInputElement | null>(null)
 
@@ -74,24 +68,10 @@ export default function SearchFilter({
     setSearch(value)
   }, 300)
 
-  useEffect(() => {
-    const url = new URL(window.location.href)
-    const updateSearchParam = (name: string, value: string) => {
-      // Only update when value before and after are different and both are non empty.
-      if (value === (url.searchParams.get(name) ?? "")) {
-        return
-      }
-      url.searchParams.set(name, value)
-    }
-
-    updateSearchParam(SEARCH, search)
-    updateSearchParam(LANGUAGE, language)
-    updateSearchParam(TYPE, type)
-    updateSearchParam(CATEGORY, category)
-    history.replaceState({ ...history.state }, "", url.toString())
-
-    updateQuery({ search, language, type, category })
-  }, [search, language, type, category])
+  useEffect(
+    () => updateSearchQuery({ search, category, language, type }),
+    [search, language, type, category],
+  )
 
   return (
     <>

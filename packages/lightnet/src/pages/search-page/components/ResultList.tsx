@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import Icon from "../../../components/Icon"
 import { detailsPagePath } from "../../../utils/paths"
@@ -6,11 +6,11 @@ import type { SearchItem } from "../../api/search-response"
 import type { MediaType, TranslatedLanguage } from "../types"
 import type { Translations } from "../utils/search-translations"
 import { useProvidedTranslations } from "../utils/use-provided-translations"
+import { useSearch } from "../hooks/use-search"
 
 const PAGE_SIZE = 30
 
 interface Props {
-  items: SearchItem[]
   locale: string | undefined
   translations: Translations
   categories: Record<string, string>
@@ -20,7 +20,6 @@ interface Props {
 }
 
 export default function ResultList({
-  items,
   locale,
   categories,
   translations,
@@ -28,6 +27,15 @@ export default function ResultList({
   direction,
   mediaTypes,
 }: Props) {
+  const { results, isLoading } = useSearch()
+
+  // restore scroll position after back navigation
+  useEffect(() => {
+    const { state } = history
+    if (!isLoading && state?.scrollY) {
+      window.scrollTo(0, state.scrollY)
+    }
+  }, [isLoading])
   const [maxItems, setMaxItems] = useState(15)
   const t = useProvidedTranslations(translations)
 
@@ -46,7 +54,7 @@ export default function ResultList({
   return (
     <>
       <ol className={`divide-y divide-gray-200 px-4 md:px-8`}>
-        {items.slice(0, maxItems).map((item) => (
+        {results.slice(0, maxItems).map((item) => (
           <li key={item.id} lang={item.language}>
             <a
               href={detailsPagePath(locale, {
@@ -116,7 +124,7 @@ export default function ResultList({
           </li>
         ))}
       </ol>
-      {items.length > maxItems && (
+      {results.length > maxItems && (
         <div className="mt-8 flex flex-col px-4 md:px-8">
           <div className="dy-divider">
             <button
@@ -128,6 +136,11 @@ export default function ResultList({
               <Icon className="mdi--chevron-down" ariaLabel="" />
             </button>
           </div>
+        </div>
+      )}
+      {!results.length && !isLoading && (
+        <div className="mt-24 text-center font-bold text-gray-500">
+          {t("ln.search.no-results")}
         </div>
       )}
     </>

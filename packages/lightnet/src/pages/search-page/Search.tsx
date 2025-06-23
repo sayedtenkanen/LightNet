@@ -24,16 +24,7 @@ export default function Search({
   direction: "rtl" | "ltr"
   filterByLocale: boolean
 }) {
-  const { results, updateQuery, isLoading } = useSearch()
   const t = useProvidedTranslations(translations)
-
-  // restore scroll position after back navigation
-  useEffect(() => {
-    const { state } = history
-    if (!isLoading && state?.scrollY) {
-      window.scrollTo(0, state.scrollY)
-    }
-  }, [isLoading])
 
   return (
     <>
@@ -48,12 +39,10 @@ export default function Search({
           categories={categories}
           locale={locale}
           filterByLocale={filterByLocale}
-          updateQuery={updateQuery}
         />
       </div>
 
       <ResultList
-        items={results}
         locale={locale}
         direction={direction}
         translations={translations}
@@ -61,11 +50,6 @@ export default function Search({
         mediaTypes={mediaTypes}
         contentLanguages={contentLanguages}
       />
-      {!results.length && !isLoading && (
-        <div className="mt-24 text-center font-bold text-gray-500">
-          {t("ln.search.no-results")}
-        </div>
-      )}
     </>
   )
 }
