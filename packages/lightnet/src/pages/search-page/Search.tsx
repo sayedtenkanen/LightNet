@@ -1,8 +1,5 @@
-import { useEffect } from "react"
-
 import ResultList from "./components/ResultList"
 import SearchFilter from "./components/SearchFilter"
-import { useSearch } from "./hooks/use-search"
 import type { MediaType, TranslatedLanguage } from "./types"
 import type { Translations } from "./utils/search-translations"
 import { useProvidedTranslations } from "./utils/use-provided-translations"

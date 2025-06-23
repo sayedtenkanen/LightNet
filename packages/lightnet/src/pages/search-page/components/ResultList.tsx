@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState } from "react"
 
 import Icon from "../../../components/Icon"
 import { detailsPagePath } from "../../../utils/paths"
-import type { SearchItem } from "../../api/search-response"
+import { useSearch } from "../hooks/use-search"
 import type { MediaType, TranslatedLanguage } from "../types"
 import type { Translations } from "../utils/search-translations"
 import { useProvidedTranslations } from "../utils/use-provided-translations"
-import { useSearch } from "../hooks/use-search"
 
 const PAGE_SIZE = 30
 

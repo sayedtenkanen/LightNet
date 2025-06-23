@@ -3,9 +3,6 @@ import { useEffect, useRef, useState } from "react"
 import Icon from "../../../components/Icon"
 import { useDebounce } from "../hooks/use-debounce"
 import type { MediaType, TranslatedLanguage } from "../types"
-import type { Translations } from "../utils/search-translations"
-import { useProvidedTranslations } from "../utils/use-provided-translations"
-import Select from "./Select"
 import {
   CATEGORY,
   getSearchQueryParam,
@@ -14,6 +11,9 @@ import {
   TYPE,
   updateSearchQuery,
 } from "../utils/search-query"
+import type { Translations } from "../utils/search-translations"
+import { useProvidedTranslations } from "../utils/use-provided-translations"
+import Select from "./Select"
 
 interface Props {
   contentLanguages: TranslatedLanguage[]
