@@ -51,7 +51,7 @@ export default function ResultList({
   const virtualizer = useWindowVirtualizer({
     count: results.length,
     estimateSize: () => 225,
-    overscan: 2,
+    overscan: 5,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   })
 
