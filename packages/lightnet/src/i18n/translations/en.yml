@@ -85,11 +85,6 @@ ln.search.all-types: All types
 # Used on: https://sk8-ministries.pages.dev/en/media/
 ln.search.all-categories: All categories
 
-# Button label to load more search results.
-#
-# English: More results
-ln.search.more-results: More results
-
 # Message displayed when no search results are found.
 #
 # English: No results
