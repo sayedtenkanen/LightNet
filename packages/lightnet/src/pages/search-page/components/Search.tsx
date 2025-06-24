@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react"
+import { useWindowVirtualizer } from "@tanstack/react-virtual"
+import { useEffect, useRef } from "react"
 
 import Icon from "../../../components/Icon"
 import { detailsPagePath } from "../../../utils/paths"
 import { useSearch } from "../hooks/use-search"
 import type { TranslationKey, Translations } from "../utils/search-translations"
-import { useWindowVirtualizer } from "@tanstack/react-virtual"
 
 type MediaType = {
   name: string
