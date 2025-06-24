@@ -26,6 +26,9 @@ export type SearchQueryParam =
  * @returns query parameter or undefined if it is not set
  */
 export function getSearchQueryParam(paramName: SearchQueryParam) {
+  if (!window) {
+    return undefined
+  }
   const searchParams = new URLSearchParams(window.location.search)
   return searchParams.get(paramName) ?? undefined
 }
