@@ -1,29 +1,39 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 
 import Icon from "../../../components/Icon"
 import { detailsPagePath } from "../../../utils/paths"
 import { useSearch } from "../hooks/use-search"
-import type { MediaType, TranslatedLanguage } from "../types"
-import type { Translations } from "../utils/search-translations"
-import { useProvidedTranslations } from "../utils/use-provided-translations"
+import type { TranslationKey, Translations } from "../utils/search-translations"
+
+type MediaType = {
+  name: string
+  icon: string
+}
+
+type TranslatedLanguage = {
+  name: string
+  direction: "rtl" | "ltr"
+}
 
 const PAGE_SIZE = 30
 
 interface Props {
-  locale: string | undefined
+  currentLocale: string | undefined
   translations: Translations
-  categories: Record<string, string>
-  contentLanguages: TranslatedLanguage[]
   direction: "rtl" | "ltr"
-  mediaTypes: MediaType[]
+  categories: Record<string, string>
+  languages: Record<string, TranslatedLanguage>
+  showLanguage: boolean
+  mediaTypes: Record<string, MediaType>
 }
 
 export default function ResultList({
-  locale,
+  currentLocale,
   categories,
   translations,
-  contentLanguages,
+  languages,
   direction,
+  showLanguage,
   mediaTypes,
 }: Props) {
   const { results, isLoading } = useSearch()
@@ -36,19 +46,7 @@ export default function ResultList({
     }
   }, [isLoading])
   const [maxItems, setMaxItems] = useState(15)
-  const t = useProvidedTranslations(translations)
-
-  const types = useMemo(
-    () =>
-      Object.fromEntries(
-        mediaTypes.map(({ id, icon, label }) => [id, { icon, label }]),
-      ),
-    [mediaTypes],
-  )
-  const languages = useMemo(
-    () => Object.fromEntries(contentLanguages.map((lang) => [lang.code, lang])),
-    [contentLanguages],
-  )
+  const t = (key: TranslationKey) => translations[key]
 
   return (
     <>
@@ -56,7 +54,7 @@ export default function ResultList({
         {results.slice(0, maxItems).map((item) => (
           <li key={item.id} lang={item.language}>
             <a
-              href={detailsPagePath(locale, {
+              href={detailsPagePath(currentLocale, {
                 id: item.id,
               })}
               className="group flex overflow-hidden py-6 transition-colors ease-in-out md:rounded-sm md:py-10 md:hover:bg-gray-100"
@@ -76,8 +74,8 @@ export default function ResultList({
               <div className="ms-5 flex grow flex-col justify-center text-xs sm:ms-8">
                 <h2 className="mb-1 line-clamp-3 text-sm font-bold text-gray-700 md:mb-3 md:text-base">
                   <Icon
-                    className={`${types[item.type].icon} me-2 align-bottom text-2xl text-gray-700`}
-                    ariaLabel={types[item.type].label}
+                    className={`${mediaTypes[item.type].icon} me-2 align-bottom text-2xl text-gray-700`}
+                    ariaLabel={mediaTypes[item.type].name}
                   />
                   <span>{item.title}</span>
                 </h2>
@@ -87,12 +85,12 @@ export default function ResultList({
                       {item.authors.join(", ")}
                     </p>
                   )}
-                  {contentLanguages.length > 1 && (
+                  {showLanguage && (
                     <span className="rounded-lg border border-gray-300 px-2 py-1 text-gray-500">
                       {languages[item.language].name}
                     </span>
                   )}
-                  <ul lang={locale} className="flex flex-wrap gap-1">
+                  <ul lang={currentLocale} className="flex flex-wrap gap-1">
                     {item.categories?.map((category) => (
                       <li
                         key={category}
