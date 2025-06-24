@@ -11,13 +11,9 @@ export function useSearch() {
   const [query, setQuery] = useState<Partial<SearchQuery>>({})
   useEffect(() => {
     const removeSearchQueryObserver = observeSearchQuery((newQuery) => {
-      // todo remove next line
-      console.log("query updated", query, newQuery)
       const queryIsUpdated = (
         ["search", "category", "language", "type"] as const
-      ).find((key) =>
-        newQuery[key] ? newQuery[key] !== query[key] : query[key],
-      )
+      ).find((key) => newQuery[key] !== query[key])
 
       if (!queryIsUpdated) {
         return

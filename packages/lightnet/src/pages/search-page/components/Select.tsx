@@ -1,6 +1,6 @@
 type Props = {
   label: string
-  initialValue: string
+  initialValue: string | undefined
   valueChange: (value: string) => void
   options: { id: string; label: string }[]
 }

@@ -1,23 +1,16 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 
 import Icon from "../../../components/Icon"
 import { useDebounce } from "../hooks/use-debounce"
 import type { MediaType, TranslatedLanguage } from "../types"
-import {
-  CATEGORY,
-  getSearchQueryParam,
-  LANGUAGE,
-  SEARCH,
-  TYPE,
-  updateSearchQuery,
-} from "../utils/search-query"
+import { CATEGORY, LANGUAGE, SEARCH, TYPE } from "../utils/search-query"
 import type { Translations } from "../utils/search-translations"
 import { useProvidedTranslations } from "../utils/use-provided-translations"
 import Select from "./Select"
+import { useSearchQueryParam } from "../hooks/use-search-query-param"
 
 interface Props {
   contentLanguages: TranslatedLanguage[]
-  // todo move this to a json file
   categories: Record<string, string>
   mediaTypes: MediaType[]
   locale?: string
@@ -40,25 +33,22 @@ export default function SearchFilter({
   // todo calculate this once during build time
   const categoriesFilterEnabled = Object.keys(categories).length > 0
 
-  const [search, setSearch] = useState(getSearchQueryParam(SEARCH))
+  const [search, setSearch] = useSearchQueryParam(SEARCH)
   // todo calculate this once during build time
-  const [language, setLanguage] = useState(() => {
-    let initialLanguageFilter = ""
-    const hasContentLanguage = contentLanguages.find(
-      ({ code }) => code === locale,
-    )
-    if (
-      filterByLocale &&
-      locale &&
-      hasContentLanguage &&
-      languageFilterEnabled
-    ) {
-      initialLanguageFilter = locale
-    }
-    return getSearchQueryParam(LANGUAGE, initialLanguageFilter)()
-  })
-  const [type, setType] = useState(getSearchQueryParam(TYPE))
-  const [category, setCategory] = useState(getSearchQueryParam(CATEGORY))
+  let initialLanguageFilter = ""
+  const hasContentLanguage = contentLanguages.find(
+    ({ code }) => code === locale,
+  )
+  if (filterByLocale && locale && hasContentLanguage && languageFilterEnabled) {
+    initialLanguageFilter = locale
+  }
+
+  const [language, setLanguage] = useSearchQueryParam(
+    LANGUAGE,
+    initialLanguageFilter,
+  )
+  const [type, setType] = useSearchQueryParam(TYPE)
+  const [category, setCategory] = useSearchQueryParam(CATEGORY)
 
   const searchInput = useRef<HTMLInputElement | null>(null)
 
@@ -67,11 +57,6 @@ export default function SearchFilter({
   const debouncedSetSearch = useDebounce((value: string) => {
     setSearch(value)
   }, 300)
-
-  useEffect(
-    () => updateSearchQuery({ search, category, language, type }),
-    [search, language, type, category],
-  )
 
   return (
     <>
