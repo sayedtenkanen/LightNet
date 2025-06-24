@@ -27,10 +27,10 @@ jobs:
       pull-requests: write
     name: Publish preview release
     steps:
-      - uses: actions/checkout@4
+      - uses: actions/checkout@v4
 
       - name: Setup PNPM
-        uses: pnpm/action-setup@4
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -42,7 +42,7 @@ jobs:
         run: pnpm install
 
       - name: Remove Preview Label
-        uses: actions-ecosystem/action-remove-labels@1
+        uses: actions-ecosystem/action-remove-labels@v1
         with:
           labels: "pr preview"
 
