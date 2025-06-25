@@ -43,6 +43,7 @@ export default function ResultList({
     estimateSize: () => 225,
     getItemKey: (index) => results[index].id,
     overscan: 5,
+    gap: 1,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   })
 
@@ -77,9 +78,12 @@ export default function ResultList({
   useLayoutEffect(() => {
     const { state } = history
     if (!isLoading && state?.searchScrollY !== undefined) {
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: state.searchScrollY, behavior: "instant" })
-      })
+      // chain request animation frames to make firefox work
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          window.scrollTo({ top: state.searchScrollY, behavior: "instant" }),
+        ),
+      )
     }
   }, [isLoading])
 
