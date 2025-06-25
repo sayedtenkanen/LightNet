@@ -35,7 +35,16 @@ export default function ResultList({
   showLanguage,
   mediaTypes,
 }: Props) {
+  const listRef = useRef<HTMLDivElement | null>(null)
+
   const { results, isLoading } = useSearch()
+  const virtualizer = useWindowVirtualizer({
+    count: results.length,
+    estimateSize: () => 225,
+    getItemKey: (index) => results[index].id,
+    overscan: 5,
+    scrollMargin: listRef.current?.offsetTop ?? 0,
+  })
 
   // Astro's ClientRouter is writing a incorrect scroll position to
   // history.state.scrollY. We have seen this when having the search results
@@ -46,9 +55,11 @@ export default function ResultList({
   // to be used by the scroll restoration.
   useEffect(() => {
     const storeScrollPosition = () => {
-      const { scrollY } = window
       const state = history.state ?? {}
-      history.replaceState({ ...state, searchScrollY: scrollY }, "")
+      history.replaceState(
+        { ...state, searchScrollY: virtualizer.scrollOffset },
+        "",
+      )
     }
     document.addEventListener("astro:before-swap", storeScrollPosition)
     return () =>
@@ -62,21 +73,11 @@ export default function ResultList({
   useEffect(() => {
     const { state } = history
     if (!isLoading && state?.searchScrollY) {
-      window.scrollTo(0, state.searchScrollY)
+      virtualizer.scrollToOffset(state.searchScrollY)
     }
   }, [isLoading])
 
   const t = (key: TranslationKey) => translations[key]
-
-  const listRef = useRef<HTMLDivElement | null>(null)
-
-  const virtualizer = useWindowVirtualizer({
-    count: results.length,
-    estimateSize: () => 225,
-    getItemKey: (index) => results[index].id,
-    overscan: 5,
-    scrollMargin: listRef.current?.offsetTop ?? 0,
-  })
 
   return (
     <>
