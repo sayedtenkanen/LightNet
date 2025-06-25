@@ -2,4 +2,4 @@
 "lightnet": minor
 ---
 
-Provide search section
+Provide `SearchSection` component.
