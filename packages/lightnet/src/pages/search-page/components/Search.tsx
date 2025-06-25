@@ -56,10 +56,7 @@ export default function ResultList({
   useEffect(() => {
     const storeScrollPosition = () => {
       const state = history.state ?? {}
-      history.replaceState(
-        { ...state, searchScrollY: virtualizer.scrollOffset },
-        "",
-      )
+      history.replaceState({ ...state, searchScrollY: window.scrollY }, "")
     }
     document.addEventListener("astro:before-swap", storeScrollPosition)
     return () =>
