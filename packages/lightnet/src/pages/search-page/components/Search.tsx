@@ -73,7 +73,7 @@ export default function ResultList({
   useEffect(() => {
     const { state } = history
     if (!isLoading && state?.searchScrollY) {
-      virtualizer.scrollToOffset(state.searchScrollY)
+      window.scrollTo(0, state.searchScrollY)
     }
   }, [isLoading])
 
