@@ -80,14 +80,6 @@ export default defineConfig({
           href: "/media",
           label: "ln.search.title", // LightNet internal translation key
         },
-        // todo remove
-        {
-          /**
-           * Link to the homepage with search.
-           */
-          href: "/home-search",
-          label: "Homepage with Search", // LightNet internal translation key
-        },
         {
           /**
            * Link to a custom About page.
