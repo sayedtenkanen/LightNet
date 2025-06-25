@@ -37,13 +37,35 @@ export default function ResultList({
 }: Props) {
   const { results, isLoading } = useSearch()
 
-  // restore scroll position after back navigation
+  // Astro's ClientRouter is writing a incorrect scroll position to
+  // history.state.scrollY. We have seen this when having the search results
+  // below the fold. This leads to incorrect scroll position restoration after
+  // navigating back.
+  //
+  // We store the correct scroll value to a custom property "searchScrollY"
+  // to be used by the scroll restoration.
+  useEffect(() => {
+    const storeScrollPosition = () => {
+      const { scrollY } = window
+      const state = history.state ?? {}
+      history.replaceState({ ...state, searchScrollY: scrollY }, "")
+    }
+    document.addEventListener("astro:before-swap", storeScrollPosition)
+    return () =>
+      document.removeEventListener("astro:before-swap", storeScrollPosition)
+  }, [])
+
+  // Restore scroll position after back navigation.
+  // We need to implement this because default restoration is kicking in
+  // before results are loaded. Also default restoration uses and incorrect scroll position.
+  // This is why we rely on our custom property.
   useEffect(() => {
     const { state } = history
-    if (!isLoading && state?.scrollY) {
-      window.scrollTo(0, state.scrollY)
+    if (!isLoading && state?.searchScrollY) {
+      window.scrollTo(0, state.searchScrollY)
     }
   }, [isLoading])
+
   const t = (key: TranslationKey) => translations[key]
 
   const listRef = useRef<HTMLDivElement | null>(null)
