@@ -80,9 +80,7 @@ export default function ResultList({
     if (!isLoading && state?.searchScrollY !== undefined) {
       // chain request animation frames to make firefox work
       requestAnimationFrame(() =>
-        requestAnimationFrame(() =>
-          window.scrollTo({ top: state.searchScrollY, behavior: "instant" }),
-        ),
+        window.scrollTo({ top: state.searchScrollY, behavior: "instant" }),
       )
     }
   }, [isLoading])
