@@ -1,5 +1,5 @@
 import { useWindowVirtualizer } from "@tanstack/react-virtual"
-import { useEffect, useRef } from "react"
+import { useEffect, useLayoutEffect, useRef } from "react"
 
 import Icon from "../../../components/Icon"
 import { detailsPagePath } from "../../../utils/paths"
@@ -54,23 +54,32 @@ export default function ResultList({
   // We store the correct scroll value to a custom property "searchScrollY"
   // to be used by the scroll restoration.
   useEffect(() => {
+    let timeout: number | undefined
     const storeScrollPosition = () => {
-      const state = history.state ?? {}
-      history.replaceState({ ...state, searchScrollY: window.scrollY }, "")
+      if (timeout) {
+        window.clearTimeout(timeout)
+      }
+      timeout = window.setTimeout(() => {
+        const state = history.state ?? {}
+        history.pushState({ ...state, searchScrollY: window.scrollY }, "")
+      }, 50)
     }
-    document.addEventListener("astro:before-swap", storeScrollPosition)
-    return () =>
-      document.removeEventListener("astro:before-swap", storeScrollPosition)
+    document.addEventListener("scroll", storeScrollPosition)
+    return () => {
+      document.removeEventListener("scroll", storeScrollPosition)
+    }
   }, [])
 
   // Restore scroll position after back navigation.
   // We need to implement this because default restoration is kicking in
   // before results are loaded. Also default restoration uses and incorrect scroll position.
   // This is why we rely on our custom property.
-  useEffect(() => {
+  useLayoutEffect(() => {
     const { state } = history
-    if (!isLoading && state?.searchScrollY) {
-      window.scrollTo(0, state.searchScrollY)
+    if (!isLoading && state?.searchScrollY !== undefined) {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: state.searchScrollY, behavior: "instant" })
+      })
     }
   }, [isLoading])
 
