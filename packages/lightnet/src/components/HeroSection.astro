@@ -13,7 +13,7 @@ interface Props {
   subtitleSize?: "sm" | "md" | "lg" | "xl"
   subtitleClass?: string
   className?: string
-  withSearchInput?: boolean
+  showSearch?: boolean
 }
 const {
   image,
@@ -24,7 +24,7 @@ const {
   titleClass,
   subtitleClass,
   className,
-  withSearchInput = false,
+  showSearch = false,
 } = Astro.props
 
 const titleSizes = {
@@ -82,7 +82,7 @@ const t = Astro.locals.i18n.t
         )
       }
       {
-        withSearchInput && (
+        showSearch && (
           <form
             action={`/${Astro.currentLocale}/media`}
             method="get"
