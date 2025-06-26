@@ -48,10 +48,11 @@ export default function SearchFilter({
 
   return (
     <>
-      <label className="dy-input dy-input-bordered mb-2 flex items-center gap-2">
+      <label className="dy-input dy-input-bordered mb-2 flex items-center gap-2 rounded-2xl">
         <input
           type="search"
-          className="grow"
+          className="grow placeholder-gray-500"
+          name="search"
           ref={searchInput}
           placeholder={t("ln.search.placeholder")}
           enterKeyHint="search"
