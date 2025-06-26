@@ -40,9 +40,9 @@ export default function ResultList({
   const { results, isLoading } = useSearch()
   const virtualizer = useWindowVirtualizer({
     count: results.length,
-    estimateSize: () => 225,
+    estimateSize: () => 250,
     getItemKey: (index) => results[index].id,
-    overscan: 5,
+    overscan: 2,
     gap: 1,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   })

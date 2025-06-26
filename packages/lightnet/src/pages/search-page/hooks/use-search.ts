@@ -8,6 +8,7 @@ export function useSearch() {
   const fuse = useRef<Fuse<SearchItem>>(undefined)
   const [allItems, setAllItems] = useState<SearchItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [results, setResults] = useState<SearchItem[]>([])
   const [query, setQuery] = useState<Partial<SearchQuery>>({})
   useEffect(() => {
     const removeSearchQueryObserver = observeSearchQuery((newQuery) => {
@@ -53,38 +54,43 @@ export function useSearch() {
     return removeSearchQueryObserver
   }, [])
 
-  const { language, type, category, search } = query
-  const fuseQuery = []
-  // order is relevant! query will stop evaluation
-  // when condition is not met.
-  if (language) {
-    fuseQuery.push({ language: `=${language}` })
-  }
-  if (type) {
-    fuseQuery.push({ type: `=${type}` })
-  }
-  if (category) {
-    fuseQuery.push({ categories: `=${category}` })
-  }
-  if (search) {
-    fuseQuery.push({
-      $or: [
-        { title: search },
-        { description: search },
-        { authors: search },
-        { id: search },
-      ],
-    })
-  }
+  useEffect(() => {
+    const { language, type, category, search } = query
+    const fuseQuery = []
+    // order is relevant! query will stop evaluation
+    // when condition is not met.
+    if (language) {
+      fuseQuery.push({ language: `=${language}` })
+    }
+    if (type) {
+      fuseQuery.push({ type: `=${type}` })
+    }
+    if (category) {
+      fuseQuery.push({ categories: `=${category}` })
+    }
+    if (search) {
+      fuseQuery.push({
+        $or: [
+          { title: search },
+          { description: search },
+          { authors: search },
+          { id: search },
+        ],
+      })
+    }
 
-  if (!fuse.current || !fuseQuery.length) {
-    return { results: allItems, isLoading }
-  }
+    if (!fuse.current || !fuseQuery.length) {
+      setResults(allItems)
+      return
+    }
+
+    setResults(
+      fuse.current.search({ $and: fuseQuery }).map((fuseItem) => fuseItem.item),
+    )
+  }, [query, allItems])
 
   return {
-    results: fuse.current
-      .search({ $and: fuseQuery })
-      .map((fuseItem) => fuseItem.item),
+    results,
     isLoading,
   }
 }
