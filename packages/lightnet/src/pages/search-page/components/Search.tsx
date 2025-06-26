@@ -33,7 +33,6 @@ export default function ResultList({
     estimateSize: () => rowHeight,
     getItemKey: (index) => results[index].id,
     overscan: 2,
-    gap: 1,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   })
 
@@ -42,7 +41,7 @@ export default function ResultList({
       // This is the fixed row heights that have a responsive breakpoint
       // If you update here, also update the initial height
       const newRowHeight = window.matchMedia("(min-width: 640px)").matches
-        ? 250
+        ? 256
         : 208
       setRowHeight(newRowHeight)
     }
