@@ -24,6 +24,7 @@ export default function ResultList({
   showLanguage,
   mediaTypes,
 }: Props) {
+  const restoredPosition = useRef(0)
   const listRef = useRef<HTMLDivElement | null>(null)
   const [rowHeight, setRowHeight] = useState(208)
 
@@ -61,6 +62,7 @@ export default function ResultList({
   // We store the correct scroll value to a custom property "searchScrollY"
   // to be used by the scroll restoration.
   useEffect(() => {
+    restoredPosition.current = history.state?.searchScrollY ?? 0
     let timeout: number | undefined
     const storeScrollPosition = () => {
       if (timeout) {
@@ -81,12 +83,11 @@ export default function ResultList({
   // We need to implement this because default restoration is kicking in
   // before results are loaded. Also default restoration uses and incorrect scroll position.
   // This is why we rely on our custom property.
-  useLayoutEffect(() => {
+  useEffect(() => {
     const { state } = history
     if (!isLoading && state?.searchScrollY !== undefined) {
-      // chain request animation frames to make firefox work
       requestAnimationFrame(() =>
-        window.scrollTo({ top: state.searchScrollY, behavior: "instant" }),
+        window.scrollTo({ top: restoredPosition.current }),
       )
     }
   }, [isLoading])
