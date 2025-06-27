@@ -1,5 +1,5 @@
 import { useWindowVirtualizer } from "@tanstack/react-virtual"
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { useSearch } from "../hooks/use-search"
 import type { TranslationKey, Translations } from "../utils/search-translations"
