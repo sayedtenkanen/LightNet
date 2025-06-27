@@ -1,5 +1,5 @@
 import Fuse from "fuse.js"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 import type { SearchItem, SearchResponse } from "../../api/search-response"
 import { observeSearchQuery, type SearchQuery } from "../utils/search-query"
@@ -8,7 +8,6 @@ export function useSearch() {
   const fuse = useRef<Fuse<SearchItem>>(undefined)
   const [allItems, setAllItems] = useState<SearchItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [results, setResults] = useState<SearchItem[]>([])
   const [query, setQuery] = useState<Partial<SearchQuery>>({})
   useEffect(() => {
     const removeSearchQueryObserver = observeSearchQuery((newQuery) => {
@@ -54,7 +53,7 @@ export function useSearch() {
     return removeSearchQueryObserver
   }, [])
 
-  useEffect(() => {
+  const results = useMemo(() => {
     const { language, type, category, search } = query
     const fuseQuery = []
     // order is relevant! query will stop evaluation
@@ -80,13 +79,12 @@ export function useSearch() {
     }
 
     if (!fuse.current || !fuseQuery.length) {
-      setResults(allItems)
-      return
+      return allItems
     }
 
-    setResults(
-      fuse.current.search({ $and: fuseQuery }).map((fuseItem) => fuseItem.item),
-    )
+    return fuse.current
+      .search({ $and: fuseQuery })
+      .map((fuseItem) => fuseItem.item)
   }, [query, allItems])
 
   return {
