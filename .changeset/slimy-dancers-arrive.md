@@ -3,3 +3,5 @@
 ---
 
 Search input also searches language, type and categories of a media item in the current site language.
+
+Pro tip: Search for "theology | book" to find theology books.
