@@ -4,6 +4,15 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import type { SearchItem, SearchResponse } from "../../api/search-response"
 import { observeSearchQuery, type SearchQuery } from "../utils/search-query"
 
+declare global {
+  interface Window {
+    lnSearchState?: {
+      fuse: Fuse<SearchItem>
+      items: SearchItem[]
+    }
+  }
+}
+
 export function useSearch() {
   const fuse = useRef<Fuse<SearchItem>>(undefined)
   const [allItems, setAllItems] = useState<SearchItem[]>([])
@@ -44,12 +53,24 @@ export function useSearch() {
           ignoreLocation: true,
         })
         setAllItems(items)
+        window.lnSearchState = {
+          items,
+          fuse: fuse.current,
+        }
       } catch (error) {
         console.error(error)
       }
       setIsLoading(false)
     }
-    fetchData()
+    // try restore old search index
+    const { lnSearchState } = window
+    if (lnSearchState) {
+      fuse.current = lnSearchState.fuse
+      setAllItems(lnSearchState.items)
+      setIsLoading(false)
+    } else {
+      fetchData()
+    }
     return removeSearchQueryObserver
   }, [])
 
