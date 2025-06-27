@@ -3,7 +3,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react"
 
 import { useSearch } from "../hooks/use-search"
 import type { TranslationKey, Translations } from "../utils/search-translations"
-import ResultRow, { type MediaType, type TranslatedLanguage } from "./ResultRow"
+import SearchListItem, {
+  type MediaType,
+  type TranslatedLanguage,
+} from "./SearchListItem"
 
 interface Props {
   currentLocale: string | undefined
@@ -15,7 +18,7 @@ interface Props {
   mediaTypes: Record<string, MediaType>
 }
 
-export default function ResultList({
+export default function SearchList({
   currentLocale,
   categories,
   translations,
@@ -116,7 +119,7 @@ export default function ResultList({
                   }px)`,
                 }}
               >
-                <ResultRow
+                <SearchListItem
                   item={item}
                   direction={direction}
                   showLanguage={showLanguage}

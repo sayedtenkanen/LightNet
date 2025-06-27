@@ -1,5 +1,5 @@
 ---
-import Search from "../pages/search-page/components/Search.astro"
+import SearchList from "../pages/search-page/components/SearchList.astro"
 import SearchFilter from "../pages/search-page/components/SearchFilter.astro"
 import Section, { type Props as SectionProps } from "./Section.astro"
 
@@ -12,5 +12,5 @@ type Props = Omit<SectionProps, "disableHorizontalPadding" | "maxWidth">;
   <div class="px-4 md:px-8">
     <SearchFilter />
   </div>
-  <Search />
+  <SearchList />
 </Section>

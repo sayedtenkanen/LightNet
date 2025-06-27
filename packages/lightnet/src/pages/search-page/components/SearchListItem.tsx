@@ -22,7 +22,7 @@ interface Props {
   mediaTypes: Record<string, MediaType>
 }
 
-export default function ResultRow({
+export default function SearchListItem({
   item,
   currentLocale,
   categories,
@@ -37,7 +37,7 @@ export default function ResultRow({
         id: item.id,
       })}
       lang={item.language}
-      className="group flex h-52 overflow-hidden py-6 transition-colors ease-in-out sm:h-64 md:rounded-sm md:py-10 md:hover:bg-gray-100"
+      className="group flex h-52 overflow-hidden py-2 transition-colors ease-in-out sm:h-64 md:rounded-sm md:hover:bg-gray-100"
     >
       <div className="flex h-full w-36 shrink-0 flex-col items-start justify-center">
         <img
@@ -59,7 +59,7 @@ export default function ResultRow({
           />
           <span>{item.title}</span>
         </h2>
-        <div className="mb-3 flex flex-col flex-wrap items-start gap-2 md:flex-row md:items-center md:gap-3">
+        <div className="flex flex-col flex-wrap items-start gap-2 sm:mb-3 md:flex-row md:items-center md:gap-3">
           {!!item.authors?.length && (
             <p className="mb-1 line-clamp-2 sm:line-clamp-1 md:mb-0 md:text-base">
               {item.authors.join(", ")}
@@ -70,7 +70,10 @@ export default function ResultRow({
               {languages[item.language].name}
             </span>
           )}
-          <ul lang={currentLocale} className="flex flex-wrap gap-1">
+          <ul
+            lang={currentLocale}
+            className="flex max-h-14 flex-wrap gap-1 overflow-hidden sm:max-h-6"
+          >
             {item.categories?.map((category) => (
               <li
                 key={category}

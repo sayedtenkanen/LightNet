@@ -1,6 +1,6 @@
 ---
 import Page from "../../layouts/Page.astro"
-import Search from "./components/Search.astro"
+import SearchList from "./components/SearchList.astro"
 import SearchFilter from "./components/SearchFilter.astro"
 
 export { getLocalePaths as getStaticPaths } from "../../i18n/get-locale-paths"
@@ -16,6 +16,6 @@ const { t } = Astro.locals.i18n
       </h1>
       <SearchFilter />
     </div>
-    <Search />
+    <SearchList />
   </div>
 </Page>
