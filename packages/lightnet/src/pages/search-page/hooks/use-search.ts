@@ -9,11 +9,24 @@ declare global {
     lnSearchState?: {
       fuse: Fuse<SearchItem>
       items: SearchItem[]
+      locale?: string
     }
   }
 }
 
-export function useSearch() {
+interface Context {
+  categories: Record<string, string>
+  mediaTypes: Record<string, { name: string }>
+  languages: Record<string, { name: string }>
+  currentLocale?: string
+}
+
+export function useSearch({
+  currentLocale,
+  categories,
+  mediaTypes,
+  languages,
+}: Context) {
   const fuse = useRef<Fuse<SearchItem>>(undefined)
   const [allItems, setAllItems] = useState<SearchItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -38,11 +51,28 @@ export function useSearch() {
           )
         }
         const { items }: SearchResponse = await response.json()
-        fuse.current = new Fuse(items, {
+        const enrichedItems = items.map((item) => {
+          const translatedCategories =
+            item.categories &&
+            item.categories.map((categoryId) => categories[categoryId])
+          const translatedType = mediaTypes[item.type].name
+          const translatedLanguage = languages[item.language].name
+
+          return {
+            ...item,
+            translatedCategories,
+            translatedType,
+            translatedLanguage,
+          }
+        })
+        fuse.current = new Fuse(enrichedItems, {
           keys: [
             { name: "title", weight: 3 },
             "language",
             { name: "authors", weight: 2 },
+            { name: "translatedCategories", weight: 2 },
+            { name: "translatedType", weight: 2 },
+            { name: "translatedLanguage", weight: 2 },
             "description",
             "type",
             "categories",
@@ -54,6 +84,7 @@ export function useSearch() {
         })
         setAllItems(items)
         window.lnSearchState = {
+          locale: currentLocale,
           items,
           fuse: fuse.current,
         }
@@ -62,9 +93,11 @@ export function useSearch() {
       }
       setIsLoading(false)
     }
-    // try restore old search index
+    // try restore old search index only if
+    // locale is still the same because we add translated values to the
+    // search index
     const { lnSearchState } = window
-    if (lnSearchState) {
+    if (lnSearchState && lnSearchState.locale === currentLocale) {
       fuse.current = lnSearchState.fuse
       setAllItems(lnSearchState.items)
       setIsLoading(false)
@@ -92,6 +125,9 @@ export function useSearch() {
       fuseQuery.push({
         $or: [
           { title: search },
+          { translatedCategories: search },
+          { translatedType: search },
+          { translatedLanguage: search },
           { description: search },
           { authors: search },
           { id: search },

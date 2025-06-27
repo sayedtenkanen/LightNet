@@ -31,7 +31,12 @@ export default function SearchList({
   const listRef = useRef<HTMLDivElement | null>(null)
   const [rowHeight, setRowHeight] = useState(208)
 
-  const { results, isLoading } = useSearch()
+  const { results, isLoading } = useSearch({
+    currentLocale,
+    categories,
+    languages,
+    mediaTypes,
+  })
   const virtualizer = useWindowVirtualizer({
     count: results.length,
     estimateSize: () => rowHeight,
