@@ -2,4 +2,7 @@
 "lightnet": minor
 ---
 
-Add optional search input to `HeroSection`. You can enable it by setting the `showSearch` attribute to `true`.
+Add optional search input to `HeroSection`.
+
+Enable it by setting the HeroSection's `showSearch` property to `true`.
+By default `showSearch` is set to `false`.
