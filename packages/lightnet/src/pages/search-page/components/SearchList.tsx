@@ -1,13 +1,13 @@
 import { useWindowVirtualizer } from "@tanstack/react-virtual"
 import { useEffect, useRef, useState } from "react"
 
+import { useRestoreScrollPosition } from "../hooks/use-restore-position"
 import { useSearch } from "../hooks/use-search"
 import type { TranslationKey, Translations } from "../utils/search-translations"
 import SearchListItem, {
   type MediaType,
   type TranslatedLanguage,
 } from "./SearchListItem"
-import { useRestoreScrollPosition } from "../hooks/use-restore-position"
 
 interface Props {
   currentLocale: string | undefined
