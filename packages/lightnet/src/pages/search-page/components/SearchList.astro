@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content"
+
 import { getCategories } from "../../../content/get-categories"
 import { contentLanguages } from "../../../content/get-languages"
 import { getMediaTypes } from "../../../content/get-media-types"
@@ -30,7 +31,7 @@ const languages = Object.fromEntries(
   ]),
 )
 
-const itemCount = (await getCollection("media")).length
+const mediaItemsTotal = (await getCollection("media")).length
 
 const translations = provideTranslations(t)
 const showLanguage = contentLanguages.length > 1
@@ -45,5 +46,5 @@ const showLanguage = contentLanguages.length > 1
   mediaTypes={mediaTypes}
   languages={languages}
   showLanguage={showLanguage}
-  itemCount={itemCount}
+  mediaItemsTotal={mediaItemsTotal}
 />

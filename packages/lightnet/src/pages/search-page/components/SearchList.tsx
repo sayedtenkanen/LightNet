@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from "react"
 
 import { useSearch } from "../hooks/use-search"
 import type { TranslationKey, Translations } from "../utils/search-translations"
+import LoadingSkeleton from "./LoadingSkeleton"
 import SearchListItem, {
   type MediaType,
   type TranslatedLanguage,
 } from "./SearchListItem"
-import LoadingSkeleton from "./LoadingSkeleton"
 
 interface Props {
   currentLocale: string | undefined
@@ -17,8 +17,7 @@ interface Props {
   languages: Record<string, TranslatedLanguage>
   showLanguage: boolean
   mediaTypes: Record<string, MediaType>
-  // todo find better name for this
-  itemCount: number
+  mediaItemsTotal: number
 }
 
 export default function SearchList({
@@ -29,7 +28,7 @@ export default function SearchList({
   direction,
   showLanguage,
   mediaTypes,
-  itemCount,
+  mediaItemsTotal,
 }: Props) {
   const listRef = useRef<HTMLDivElement | null>(null)
   const [rowHeight, setRowHeight] = useState(208)
@@ -39,7 +38,7 @@ export default function SearchList({
     languages,
     mediaTypes,
   })
-  const count = isLoading ? itemCount : results.length
+  const count = isLoading ? mediaItemsTotal : results.length
 
   const virtualizer = useWindowVirtualizer({
     count,
