@@ -208,9 +208,9 @@ export const configSchema = z.object({
        */
       filterByLocale: z.boolean().default(false),
       /**
-       * Set this to true, to hide the search magnifier icon from the header bar.
+       * Set this to true, to remove the search magnifier icon from the header bar.
        */
-      hideSearchIconFromHeader: z.boolean().default(false),
+      hideHeaderSearchIcon: z.boolean().default(false),
     })
     .optional(),
 })
