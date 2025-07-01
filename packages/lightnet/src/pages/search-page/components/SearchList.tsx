@@ -67,7 +67,7 @@ export default function SearchList({
     }
   }, [])
 
-  useRestoreScrollPosition(isLoading)
+  //useRestoreScrollPosition(isLoading)
 
   const t = (key: TranslationKey) => translations[key]
 
