@@ -1,7 +1,6 @@
 import { useWindowVirtualizer } from "@tanstack/react-virtual"
 import { useEffect, useRef, useState } from "react"
 
-import { useRestoreScrollPosition } from "../hooks/use-restore-position"
 import { useSearch } from "../hooks/use-search"
 import type { TranslationKey, Translations } from "../utils/search-translations"
 import SearchListItem, {
@@ -66,8 +65,6 @@ export default function SearchList({
       observer.disconnect()
     }
   }, [])
-
-  //useRestoreScrollPosition(isLoading)
 
   const t = (key: TranslationKey) => translations[key]
 
