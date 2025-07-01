@@ -8,6 +8,7 @@ import SearchListItem, {
   type MediaType,
   type TranslatedLanguage,
 } from "./SearchListItem"
+import LoadingSkeleton from "./LoadingSkeleton"
 
 interface Props {
   currentLocale: string | undefined
@@ -17,6 +18,8 @@ interface Props {
   languages: Record<string, TranslatedLanguage>
   showLanguage: boolean
   mediaTypes: Record<string, MediaType>
+  // todo find better name for this
+  itemCount: number
 }
 
 export default function SearchList({
@@ -27,20 +30,22 @@ export default function SearchList({
   direction,
   showLanguage,
   mediaTypes,
+  itemCount,
 }: Props) {
   const listRef = useRef<HTMLDivElement | null>(null)
   const [rowHeight, setRowHeight] = useState(208)
-
   const { results, isLoading } = useSearch({
     currentLocale,
     categories,
     languages,
     mediaTypes,
   })
+  const count = isLoading ? itemCount : results.length
+
   const virtualizer = useWindowVirtualizer({
-    count: results.length,
+    count,
     estimateSize: () => rowHeight,
-    getItemKey: (index) => results[index].id,
+    getItemKey: (index) => (isLoading ? index : results[index].id),
     overscan: 2,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   })
@@ -88,15 +93,19 @@ export default function SearchList({
                   }px)`,
                 }}
               >
-                <SearchListItem
-                  item={item}
-                  direction={direction}
-                  showLanguage={showLanguage}
-                  currentLocale={currentLocale}
-                  categories={categories}
-                  languages={languages}
-                  mediaTypes={mediaTypes}
-                />
+                {isLoading ? (
+                  <LoadingSkeleton direction={direction} />
+                ) : (
+                  <SearchListItem
+                    item={item}
+                    direction={direction}
+                    showLanguage={showLanguage}
+                    currentLocale={currentLocale}
+                    categories={categories}
+                    languages={languages}
+                    mediaTypes={mediaTypes}
+                  />
+                )}
               </li>
             )
           })}
