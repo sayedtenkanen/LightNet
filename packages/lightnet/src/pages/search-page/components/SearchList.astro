@@ -5,7 +5,7 @@ import { getCategories } from "../../../content/get-categories"
 import { contentLanguages } from "../../../content/get-languages"
 import { getMediaTypes } from "../../../content/get-media-types"
 import { provideTranslations } from "../utils/search-translations"
-import SearchReact from "./SearchList.tsx"
+import SearchListReact from "./SearchList.tsx"
 
 const { t, currentLocale, direction } = Astro.locals.i18n
 
@@ -37,7 +37,7 @@ const translations = provideTranslations(t)
 const showLanguage = contentLanguages.length > 1
 ---
 
-<SearchReact
+<SearchListReact
   client:load
   currentLocale={currentLocale}
   direction={direction}
